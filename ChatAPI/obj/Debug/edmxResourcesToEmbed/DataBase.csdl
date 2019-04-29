@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="ChatModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="ChatEntities" annotation:LazyLoadingEnabled="true">
+    <FunctionImport Name="SelectLastMessage" ReturnType="Collection(ChatModel.SelectLastMessage_Result)">
+      <Parameter Name="Empid" Mode="In" Type="Int64" />
+    </FunctionImport>
+    <EntitySet Name="ChatMassage" EntityType="ChatModel.ChatMassage" />
+    <EntitySet Name="ChatRoom" EntityType="ChatModel.ChatRoom" />
+    <EntitySet Name="departments" EntityType="ChatModel.departments" />
+    <EntitySet Name="EmployeChatRoom" EntityType="ChatModel.EmployeChatRoom" />
+    <EntitySet Name="employees" EntityType="ChatModel.employees" />
+    <EntitySet Name="sysdiagrams" EntityType="ChatModel.sysdiagrams" />
+    <AssociationSet Name="FK_ChatMassage_ChatRoom" Association="ChatModel.FK_ChatMassage_ChatRoom">
+      <End Role="ChatRoom" EntitySet="ChatRoom" />
+      <End Role="ChatMassage" EntitySet="ChatMassage" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ChatMassage_employees" Association="ChatModel.FK_ChatMassage_employees">
+      <End Role="employees" EntitySet="employees" />
+      <End Role="ChatMassage" EntitySet="ChatMassage" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EmployeChatRoom_ChatRoom" Association="ChatModel.FK_EmployeChatRoom_ChatRoom">
+      <End Role="ChatRoom" EntitySet="ChatRoom" />
+      <End Role="EmployeChatRoom" EntitySet="EmployeChatRoom" />
+    </AssociationSet>
+    <AssociationSet Name="FK_employees_departments" Association="ChatModel.FK_employees_departments">
+      <End Role="departments" EntitySet="departments" />
+      <End Role="employees" EntitySet="employees" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EmployeChatRoom_employees" Association="ChatModel.FK_EmployeChatRoom_employees">
+      <End Role="employees" EntitySet="employees" />
+      <End Role="EmployeChatRoom" EntitySet="EmployeChatRoom" />
+    </AssociationSet>
+  </EntityContainer>
+  <ComplexType Name="SelectLastMessage_Result">
+    <Property Type="Int64" Name="IDTopic" Nullable="false" />
+    <Property Type="String" Name="RoomName" Nullable="true" MaxLength="50" />
+    <Property Type="DateTime" Name="TimeMessage" Nullable="true" Precision="23" />
+  </ComplexType>
+  <EntityType Name="ChatMassage">
+    <Key>
+      <PropertyRef Name="IdMessage" />
+    </Key>
+    <Property Name="IdMessage" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SenderID" Type="Int64" Nullable="false" />
+    <Property Name="TopicID" Type="Int64" Nullable="false" />
+    <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="Massage" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="ChatRoom" Relationship="ChatModel.FK_ChatMassage_ChatRoom" FromRole="ChatMassage" ToRole="ChatRoom" />
+    <NavigationProperty Name="employees" Relationship="ChatModel.FK_ChatMassage_employees" FromRole="ChatMassage" ToRole="employees" />
+  </EntityType>
+  <EntityType Name="ChatRoom">
+    <Key>
+      <PropertyRef Name="IdChatRoom" />
+    </Key>
+    <Property Name="IdChatRoom" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Topic" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="ChatMassage" Relationship="ChatModel.FK_ChatMassage_ChatRoom" FromRole="ChatRoom" ToRole="ChatMassage" />
+    <NavigationProperty Name="EmployeChatRoom" Relationship="ChatModel.FK_EmployeChatRoom_ChatRoom" FromRole="ChatRoom" ToRole="EmployeChatRoom" />
+  </EntityType>
+  <EntityType Name="departments">
+    <Key>
+      <PropertyRef Name="IdDepartments" />
+    </Key>
+    <Property Name="IdDepartments" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="employees" Relationship="ChatModel.FK_employees_departments" FromRole="departments" ToRole="employees" />
+  </EntityType>
+  <EntityType Name="EmployeChatRoom">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EmployeeID" Type="Int64" Nullable="false" />
+    <Property Name="ChatRoomID" Type="Int64" Nullable="false" />
+    <NavigationProperty Name="ChatRoom" Relationship="ChatModel.FK_EmployeChatRoom_ChatRoom" FromRole="EmployeChatRoom" ToRole="ChatRoom" />
+    <NavigationProperty Name="employees" Relationship="ChatModel.FK_EmployeChatRoom_employees" FromRole="EmployeChatRoom" ToRole="employees" />
+  </EntityType>
+  <EntityType Name="employees">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Department_Id" Type="Int64" />
+    <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="ChatMassage" Relationship="ChatModel.FK_ChatMassage_employees" FromRole="employees" ToRole="ChatMassage" />
+    <NavigationProperty Name="departments" Relationship="ChatModel.FK_employees_departments" FromRole="employees" ToRole="departments" />
+    <NavigationProperty Name="EmployeChatRoom" Relationship="ChatModel.FK_EmployeChatRoom_employees" FromRole="employees" ToRole="EmployeChatRoom" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_ChatMassage_ChatRoom">
+    <End Type="ChatModel.ChatRoom" Role="ChatRoom" Multiplicity="1" />
+    <End Type="ChatModel.ChatMassage" Role="ChatMassage" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ChatRoom">
+        <PropertyRef Name="IdChatRoom" />
+      </Principal>
+      <Dependent Role="ChatMassage">
+        <PropertyRef Name="TopicID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ChatMassage_employees">
+    <End Type="ChatModel.employees" Role="employees" Multiplicity="1" />
+    <End Type="ChatModel.ChatMassage" Role="ChatMassage" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="employees">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="ChatMassage">
+        <PropertyRef Name="SenderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EmployeChatRoom_ChatRoom">
+    <End Type="ChatModel.ChatRoom" Role="ChatRoom" Multiplicity="1" />
+    <End Type="ChatModel.EmployeChatRoom" Role="EmployeChatRoom" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ChatRoom">
+        <PropertyRef Name="IdChatRoom" />
+      </Principal>
+      <Dependent Role="EmployeChatRoom">
+        <PropertyRef Name="ChatRoomID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_employees_departments">
+    <End Type="ChatModel.departments" Role="departments" Multiplicity="0..1" />
+    <End Type="ChatModel.employees" Role="employees" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="departments">
+        <PropertyRef Name="IdDepartments" />
+      </Principal>
+      <Dependent Role="employees">
+        <PropertyRef Name="Department_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EmployeChatRoom_employees">
+    <End Type="ChatModel.employees" Role="employees" Multiplicity="1" />
+    <End Type="ChatModel.EmployeChatRoom" Role="EmployeChatRoom" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="employees">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="EmployeChatRoom">
+        <PropertyRef Name="EmployeeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

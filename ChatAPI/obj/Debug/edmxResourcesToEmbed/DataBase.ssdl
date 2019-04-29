@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Хранилище ChatModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="ChatMassage">
+    <Key>
+      <PropertyRef Name="IdMessage" />
+    </Key>
+    <Property Name="IdMessage" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SenderID" Type="bigint" Nullable="false" />
+    <Property Name="TopicID" Type="bigint" Nullable="false" />
+    <Property Name="Time" Type="datetime" Nullable="false" />
+    <Property Name="Massage" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="ChatRoom">
+    <Key>
+      <PropertyRef Name="IdChatRoom" />
+    </Key>
+    <Property Name="IdChatRoom" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Topic" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="departments">
+    <Key>
+      <PropertyRef Name="IdDepartments" />
+    </Key>
+    <Property Name="IdDepartments" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="EmployeChatRoom">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EmployeeID" Type="bigint" Nullable="false" />
+    <Property Name="ChatRoomID" Type="bigint" Nullable="false" />
+  </EntityType>
+  <EntityType Name="employees">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" />
+    <Property Name="Username" Type="nvarchar" MaxLength="50" />
+    <Property Name="Department_Id" Type="bigint" />
+    <Property Name="Password" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <Association Name="FK_ChatMassage_ChatRoom">
+    <End Role="ChatRoom" Type="Self.ChatRoom" Multiplicity="1" />
+    <End Role="ChatMassage" Type="Self.ChatMassage" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ChatRoom">
+        <PropertyRef Name="IdChatRoom" />
+      </Principal>
+      <Dependent Role="ChatMassage">
+        <PropertyRef Name="TopicID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ChatMassage_employees">
+    <End Role="employees" Type="Self.employees" Multiplicity="1" />
+    <End Role="ChatMassage" Type="Self.ChatMassage" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="employees">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="ChatMassage">
+        <PropertyRef Name="SenderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EmployeChatRoom_ChatRoom">
+    <End Role="ChatRoom" Type="Self.ChatRoom" Multiplicity="1" />
+    <End Role="EmployeChatRoom" Type="Self.EmployeChatRoom" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ChatRoom">
+        <PropertyRef Name="IdChatRoom" />
+      </Principal>
+      <Dependent Role="EmployeChatRoom">
+        <PropertyRef Name="ChatRoomID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_EmployeChatRoom_employees">
+    <End Role="employees" Type="Self.employees" Multiplicity="1" />
+    <End Role="EmployeChatRoom" Type="Self.EmployeChatRoom" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="employees">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="EmployeChatRoom">
+        <PropertyRef Name="EmployeeID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_employees_departments">
+    <End Role="departments" Type="Self.departments" Multiplicity="0..1" />
+    <End Role="employees" Type="Self.employees" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="departments">
+        <PropertyRef Name="IdDepartments" />
+      </Principal>
+      <Dependent Role="employees">
+        <PropertyRef Name="Department_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Function Name="SelectLastMessage" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="bigint" Mode="In" />
+  </Function>
+  <EntityContainer Name="Хранилище ChatModelContainer">
+    <EntitySet Name="ChatMassage" EntityType="Self.ChatMassage" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ChatRoom" EntityType="Self.ChatRoom" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="departments" EntityType="Self.departments" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EmployeChatRoom" EntityType="Self.EmployeChatRoom" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="employees" EntityType="Self.employees" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_ChatMassage_ChatRoom" Association="Self.FK_ChatMassage_ChatRoom">
+      <End Role="ChatRoom" EntitySet="ChatRoom" />
+      <End Role="ChatMassage" EntitySet="ChatMassage" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ChatMassage_employees" Association="Self.FK_ChatMassage_employees">
+      <End Role="employees" EntitySet="employees" />
+      <End Role="ChatMassage" EntitySet="ChatMassage" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EmployeChatRoom_ChatRoom" Association="Self.FK_EmployeChatRoom_ChatRoom">
+      <End Role="ChatRoom" EntitySet="ChatRoom" />
+      <End Role="EmployeChatRoom" EntitySet="EmployeChatRoom" />
+    </AssociationSet>
+    <AssociationSet Name="FK_EmployeChatRoom_employees" Association="Self.FK_EmployeChatRoom_employees">
+      <End Role="employees" EntitySet="employees" />
+      <End Role="EmployeChatRoom" EntitySet="EmployeChatRoom" />
+    </AssociationSet>
+    <AssociationSet Name="FK_employees_departments" Association="Self.FK_employees_departments">
+      <End Role="departments" EntitySet="departments" />
+      <End Role="employees" EntitySet="employees" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
